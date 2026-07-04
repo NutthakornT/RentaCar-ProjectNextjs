@@ -31,14 +31,36 @@ export async function updateSession(request) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isPublicPath =
-    request.nextUrl.pathname.startsWith("/login") ||
-    request.nextUrl.pathname.startsWith("/auth");
+  // Public by default (landing, car browsing, auth screens). Only these
+  // prefixes require a signed-in user; everything else stays open.
+  const protectedPrefixes = ["/booking", "/profile", "/admin"];
+  const isProtected = protectedPrefixes.some((prefix) =>
+    request.nextUrl.pathname.startsWith(prefix),
+  );
 
-  if (!user && !isPublicPath) {
+  if (!user && isProtected) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
+    url.searchParams.set("next", request.nextUrl.pathname);
     return NextResponse.redirect(url);
+  }
+
+  // /admin additionally requires an admin profile, not just any signed-in
+  // user. Signed-in non-admins are redirected home rather than to /login
+  // (they're already authenticated — the problem is their role) and rather
+  // than a 404 (no need to hide that the route exists).
+  if (user && request.nextUrl.pathname.startsWith("/admin")) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profile?.role !== "admin") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/";
+      return NextResponse.redirect(url);
+    }
   }
 
   // Must return supabaseResponse as-is so the refreshed cookies reach the browser.

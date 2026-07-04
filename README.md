@@ -1,58 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app), wired up with Supabase Auth (GitHub OAuth) and Tailwind CSS.
+# DriveLux — Car Rental MVP
 
-## Supabase setup
+A polished car-rental frontend for a **single rental company** (one admin, many
+customers — not a marketplace). Built with Next.js (App Router), Tailwind CSS
+v4, and Supabase Auth. UI runs on mock data until the backend is connected.
 
-1. Create a project at [supabase.com](https://supabase.com).
-2. In **Project Settings → API**, copy the **Project URL** and **anon public key** into `.env.local`:
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=...
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-   ```
-3. Create a GitHub OAuth App at [github.com/settings/developers](https://github.com/settings/developers):
-   - Homepage URL: `http://localhost:3000` (add your production URL later)
-   - Authorization callback URL: `https://<your-project-ref>.supabase.co/auth/v1/callback`
-4. In Supabase, go to **Authentication → Providers → GitHub**, enable it, and paste the GitHub OAuth App's **Client ID** and **Client Secret**.
-5. In **Authentication → URL Configuration**, add `http://localhost:3000/auth/callback` (and your deployed equivalent) to **Redirect URLs**.
+> **Stack note:** this repo pins **Next.js 16**, which has breaking changes vs.
+> older versions. See `AGENTS.md` — read `node_modules/next/dist/docs/` before
+> changing framework-level code.
 
-## How auth is wired up
-
-- `src/lib/supabase/client.js` / `server.js` — browser and server Supabase clients (`@supabase/ssr`).
-- `src/proxy.js` + `src/lib/supabase/proxy.js` — refreshes the session on every request and redirects signed-out users to `/login` (everything under `/login` and `/auth` stays public).
-- `src/app/login` — GitHub sign-in button.
-- `src/app/auth/callback/route.js` — exchanges the OAuth code for a session.
-- `src/app/auth/actions.js` — sign-out server action.
-
-## Getting Started
-
-First, run the development server:
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev      # http://localhost:3000
+npm run build    # production build
+npm run lint     # eslint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Copy `.env.local.example` → `.env.local` and fill in:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co   # base URL, no path
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon or publishable key>
+NEXT_PUBLIC_SITE_URL=http://localhost:3000                   # used by metadata/sitemap
+```
 
-## Learn More
+Auth uses GitHub OAuth + email/password. To enable GitHub sign-in, create a
+GitHub OAuth App (callback `https://<project-ref>.supabase.co/auth/v1/callback`),
+enable the GitHub provider in Supabase, and add `http://localhost:3000/auth/callback`
+to the Supabase redirect URLs.
 
-To learn more about Next.js, take a look at the following resources:
+## Pages
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Public** — `/` (landing), `/cars` (listing + filters), `/cars/[id]` (detail +
+booking widget), `/login`, `/signup`
+**Auth-gated** — `/booking` (checkout + confirmation), `/profile`
+**Admin** — `/admin`, `/admin/cars`, `/admin/bookings`, `/admin/users`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Route access is enforced in `src/lib/supabase/proxy.js`: everything is public
+except `/booking`, `/profile`, and `/admin`, which require a session (admin role
+checks come with the backend).
 
-## Deploy on Vercel
+## Project structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+  app/
+    (site)/          # public shell (Navbar + Footer) — home, cars, booking, auth, profile
+    admin/           # admin console — own sidebar shell, mock-data tables
+    auth/            # OAuth callback route + sign-out server action
+    opengraph-image.jsx, sitemap.js, robots.js
+  components/
+    ui/              # design-system primitives (Button, Card, Field, Rating, icons, …)
+    layout/          # Navbar, Footer, Logo
+    home/            # landing sections (Hero, SearchForm, FeaturedCars, …)
+    cars/            # CarCard, FilterSidebar, Pagination, CarGallery, BookingCard
+    booking/ reviews/ admin/
+  services/          # data-access layer (async, mock-backed — swap for Supabase later)
+  lib/
+    mock/            # cars, bookings, users, testimonials (shapes mirror the DB plan)
+    supabase/        # browser/server clients + proxy session refresh
+    utils.js, constants.js
+  types/             # JSDoc typedefs for the data shapes
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Design system
+
+Tailwind v4 theme tokens live in `src/app/globals.css`:
+primary `#0F4C81`, accent `#F6C445`, background `#F8FAFC`, plus rounded radii and
+soft shadows. Components are hand-built (no component library) for full control.
+
+## From mock data to Supabase
+
+Every read goes through `src/services/*`, which currently returns data from
+`src/lib/mock/*`. The planned tables are `profiles`, `cars`, and `bookings`
+(shapes documented in `src/types/index.js`). To go live, replace the bodies of
+the service functions with Supabase queries — call sites don't change. Admin
+write actions (add/edit/delete) are scaffolded and disabled until then.
+
+## Car images
+
+Cars render a designed gradient placeholder (`CarThumb`) so the UI is
+self-contained and always renders. Each car keeps an `image_url`; drop real
+photos at those paths (or switch `CarThumb` to `next/image`) when available.
