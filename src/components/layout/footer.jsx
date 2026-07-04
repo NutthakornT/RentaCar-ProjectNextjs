@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./logo";
-import { MapPinIcon, MailIcon, HeadsetIcon } from "@/components/ui/icons";
+import { MapPinIcon, MailIcon } from "@/components/ui/icons";
 
 const columns = [
   {
@@ -24,7 +24,6 @@ const columns = [
 ];
 
 export function Footer() {
-  const year = new Date().getFullYear();
   return (
     <footer id="footer" className="bg-primary-900 text-slate-300">
       <div className="container-page grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
@@ -58,35 +57,14 @@ export function Footer() {
           <h3 className="text-sm font-semibold text-white">Get in touch</h3>
           <ul className="mt-4 space-y-3 text-sm text-slate-400">
             <li className="flex items-center gap-2.5">
-              <MapPinIcon size={16} className="text-accent-400" />
-              120 Riverside Ave, Suite 4
+              <MapPinIcon size={16} className="text-accent-400" />1 Chalong
+              Krung 1 Alley, Lat Krabang, Bangkok 10520, Thailand
             </li>
             <li className="flex items-center gap-2.5">
               <MailIcon size={16} className="text-accent-400" />
-              hello@drivelux.example
-            </li>
-            <li className="flex items-center gap-2.5">
-              <HeadsetIcon size={16} className="text-accent-400" />
-              24/7 roadside support
+              nnutthakornn@gmail.com & suwimonbourtong@gmail.com
             </li>
           </ul>
-        </div>
-      </div>
-
-      <div className="border-t border-white/10">
-        <div className="container-page flex flex-col items-center justify-between gap-3 py-6 text-xs text-slate-400 sm:flex-row">
-          <p>© {year} DriveLux. All rights reserved.</p>
-          <p className="flex gap-4">
-            <Link href="/#" className="hover:text-white">
-              Privacy
-            </Link>
-            <Link href="/#" className="hover:text-white">
-              Terms
-            </Link>
-            <Link href="/#" className="hover:text-white">
-              Cookies
-            </Link>
-          </p>
         </div>
       </div>
     </footer>
