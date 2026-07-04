@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "DriveLux — Premium Car Rental";
+export const alt = "ChaoRoad — Premium Car Rental";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -20,7 +20,7 @@ export default function OpengraphImage() {
           justifyContent: "space-between",
           padding: "80px",
           backgroundImage:
-            "linear-gradient(135deg, #0f4c81 0%, #0d3f6b 55%, #102c47 100%)",
+            "linear-gradient(135deg, #2f6fb0 0%, #285d95 55%, #1f3f60 100%)",
           color: "white",
           fontFamily: "sans-serif",
         }}
@@ -49,8 +49,8 @@ export default function OpengraphImage() {
               fontWeight: 700,
             }}
           >
-            <span>Drive</span>
-            <span style={{ color: "#f6c445" }}>Lux</span>
+            <span>Chao</span>
+            <span style={{ color: "#f0a868" }}>Road</span>
           </div>
         </div>
 

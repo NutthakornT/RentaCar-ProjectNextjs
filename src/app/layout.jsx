@@ -17,8 +17,8 @@ const siteUrl =
 export const metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "DriveLux — Premium Car Rental",
-    template: "%s · DriveLux",
+    default: "ChaoRoad — Premium Car Rental",
+    template: "%s · ChaoRoad",
   },
   description:
     "Rent premium, meticulously maintained cars by the day. Transparent pricing, instant booking, no hidden fees.",
@@ -27,27 +27,27 @@ export const metadata = {
     "rent a car",
     "luxury car hire",
     "daily car rental",
-    "DriveLux",
+    "ChaoRoad",
   ],
-  authors: [{ name: "DriveLux" }],
+  authors: [{ name: "ChaoRoad" }],
   openGraph: {
     type: "website",
-    siteName: "DriveLux",
-    title: "DriveLux — Premium Car Rental",
+    siteName: "ChaoRoad",
+    title: "ChaoRoad — Premium Car Rental",
     description:
       "Rent premium, meticulously maintained cars by the day. Transparent pricing, instant booking.",
     url: siteUrl,
   },
   twitter: {
     card: "summary_large_image",
-    title: "DriveLux — Premium Car Rental",
+    title: "ChaoRoad — Premium Car Rental",
     description:
       "Rent premium, meticulously maintained cars by the day.",
   },
 };
 
 export const viewport = {
-  themeColor: "#0f4c81",
+  themeColor: "#2f6fb0",
 };
 
 export default function RootLayout({ children }) {

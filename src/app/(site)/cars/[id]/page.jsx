@@ -43,7 +43,7 @@ export async function generateMetadata({ params }) {
     description: `Rent the ${title} from ${formatCurrency(car.price_per_day)}/day. ${car.description}`,
     alternates: { canonical: `/cars/${car.id}` },
     openGraph: {
-      title: `${title} · DriveLux`,
+      title: `${title} · ChaoRoad`,
       description: car.tagline ?? car.description,
     },
   };

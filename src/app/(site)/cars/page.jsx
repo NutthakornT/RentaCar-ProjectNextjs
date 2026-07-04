@@ -9,7 +9,7 @@ import { SearchIcon } from "@/components/ui/icons";
 export const metadata = {
   title: "Browse Cars",
   description:
-    "Explore the DriveLux fleet — sedans, SUVs, sports cars, luxury, and EVs. Filter by type, transmission, fuel, and price.",
+    "Explore the ChaoRoad fleet — sedans, SUVs, sports cars, luxury, and EVs. Filter by type, transmission, fuel, and price.",
   alternates: { canonical: "/cars" },
 };
 

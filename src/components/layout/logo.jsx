@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { CarIcon } from "@/components/ui/icons";
 
 /**
- * DriveLux wordmark + mark.
+ * ChaoRoad wordmark + mark.
  * @param {{ href?: string, className?: string, tone?: "dark"|"light" }} props
  */
 export function Logo({ href = "/", className, tone = "dark" }) {
@@ -21,7 +21,7 @@ export function Logo({ href = "/", className, tone = "dark" }) {
           tone === "light" ? "text-white" : "text-slate-900",
         )}
       >
-        Drive<span className="text-accent-500">Lux</span>
+        Chao<span className="text-accent-500">Road</span>
       </span>
     </Link>
   );
