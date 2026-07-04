@@ -4,11 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { daysBetween, formatCurrency, formatDate, todayISO } from "@/lib/utils";
-import { PICKUP_LOCATIONS, SERVICE_FEE } from "@/lib/constants";
+import { SERVICE_FEE } from "@/lib/constants";
 import { confirmBooking } from "@/app/(site)/booking/actions";
 import { BookingSummary } from "./booking-summary";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Field, Input, Select, Textarea } from "@/components/ui/field";
+import { Field, Input, Textarea } from "@/components/ui/field";
 import { CheckIcon, ClockIcon, MailIcon, CalendarIcon } from "@/components/ui/icons";
 
 /**
@@ -25,7 +25,7 @@ export function BookingFlow({ car, initialPickup = "", initialReturn = "", userI
     name: "",
     email: userEmail,
     phone: "",
-    location: PICKUP_LOCATIONS[0],
+    location: "",
     pickup: initialPickup,
     returnDate: initialReturn,
     notes: "",
@@ -47,6 +47,7 @@ export function BookingFlow({ car, initialPickup = "", initialReturn = "", userI
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
       next.email = "Enter a valid email address.";
     if (!form.phone.trim()) next.phone = "Please enter your phone number.";
+    if (!form.location.trim()) next.location = "Please enter a pick-up location.";
     if (!form.pickup) next.pickup = "Choose a pick-up date.";
     if (!form.returnDate) next.returnDate = "Choose a return date.";
     else if (days <= 0) next.returnDate = "Return must be after pick-up.";
@@ -137,14 +138,13 @@ export function BookingFlow({ car, initialPickup = "", initialReturn = "", userI
                 aria-invalid={Boolean(errors.phone)}
               />
             </Field>
-            <Field label="Pick-up location">
-              <Select value={form.location} onChange={set("location")}>
-                {PICKUP_LOCATIONS.map((loc) => (
-                  <option key={loc} value={loc}>
-                    {loc}
-                  </option>
-                ))}
-              </Select>
+            <Field label="Pick-up location" hint={errors.location}>
+              <Input
+                value={form.location}
+                onChange={set("location")}
+                placeholder="Airport terminal, hotel address, city…"
+                aria-invalid={Boolean(errors.location)}
+              />
             </Field>
           </div>
         </section>
