@@ -24,6 +24,19 @@ export async function confirmBooking({ carId, pickup, returnDate, location, phon
   } = await supabase.auth.getUser();
   if (!user) return { error: "Please sign in to confirm your booking." };
 
+  // Admins manage the fleet and must not create customer bookings (RLS would
+  // otherwise allow it via is_admin()), so this is enforced here.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (profile?.role === "admin") {
+    return {
+      error: "Admins can't book cars. Use a customer account to make a booking.",
+    };
+  }
+
   const car = await getCarById(carId);
   if (!car) return { error: "This car is no longer available." };
 

@@ -8,6 +8,7 @@ import {
   DemoBanner,
 } from "@/components/admin/admin-ui";
 import { RowActions } from "@/components/admin/row-actions";
+import { removeCar } from "./actions";
 import { Badge } from "@/components/ui/badge";
 import { CarThumb } from "@/components/ui/car-thumb";
 import { buttonVariants } from "@/components/ui/button";
@@ -36,8 +37,8 @@ export default async function AdminCarsPage() {
       />
       <DemoBanner>
         <span className="font-semibold">Live data.</span> Cars are stored in
-        Supabase — adding or editing a car here updates the public site
-        immediately. Delete is still scaffolded and disabled below.
+        Supabase — add, edit, and delete all update the public site
+        immediately.
       </DemoBanner>
 
       {cars.length === 0 ? (
@@ -86,7 +87,11 @@ export default async function AdminCarsPage() {
                 )}
               </Td>
               <Td>
-                <RowActions editHref={`/admin/cars/${car.id}/edit`} />
+                <RowActions
+                  editHref={`/admin/cars/${car.id}/edit`}
+                  deleteAction={removeCar.bind(null, car.id)}
+                  deleteConfirm={`Delete ${car.brand} ${car.name}? This can't be undone.`}
+                />
               </Td>
             </tr>
           ))}

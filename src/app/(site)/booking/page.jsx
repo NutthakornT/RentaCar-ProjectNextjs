@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { BookingFlow } from "@/components/booking/booking-flow";
 import { EmptyState } from "@/components/ui/empty-state";
 import { buttonVariants } from "@/components/ui/button";
-import { CarIcon } from "@/components/ui/icons";
+import { CarIcon, ShieldIcon } from "@/components/ui/icons";
 import Link from "next/link";
 
 export const metadata = {
@@ -22,6 +22,17 @@ export default async function BookingPage({ searchParams }) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Admins manage the fleet; they don't book cars as customers.
+  let isAdmin = false;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+    isAdmin = profile?.role === "admin";
+  }
+
   return (
     <div className="bg-background">
       <div className="container-page py-10 sm:py-12">
@@ -35,7 +46,21 @@ export default async function BookingPage({ searchParams }) {
           </p>
         </div>
 
-        {car ? (
+        {isAdmin ? (
+          <EmptyState
+            icon={<ShieldIcon size={26} />}
+            title="Admins can't book cars"
+            description="Bookings are for customers. Sign in with a customer account to make a booking, or manage existing bookings from the admin console."
+            action={
+              <Link
+                href="/admin/bookings"
+                className={buttonVariants({ variant: "primary", size: "md" })}
+              >
+                Go to admin bookings
+              </Link>
+            }
+          />
+        ) : car ? (
           <BookingFlow
             car={car}
             initialPickup={typeof sp.pickup === "string" ? sp.pickup : ""}

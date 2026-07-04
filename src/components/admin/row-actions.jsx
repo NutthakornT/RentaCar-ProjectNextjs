@@ -1,17 +1,20 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { PencilIcon, TrashIcon } from "@/components/ui/icons";
+import { DeleteButton } from "./delete-button";
 
 const iconButtonClass =
   "inline-flex h-8 w-8 items-center justify-center rounded-lg ring-1 ring-slate-200 transition-colors disabled:cursor-not-allowed disabled:opacity-50";
 
 /**
- * Edit / delete controls for admin rows. Pass `editHref` to make the edit
- * button a real link (used by the cars table); omit it, as the bookings and
- * users tables still do, to keep the disabled scaffold. Delete stays
- * disabled everywhere until wired up.
+ * Edit / delete controls for admin rows. Each control is a real action when
+ * its prop is supplied, otherwise a disabled scaffold:
+ * - `editHref` → edit becomes a link (cars); omitted → disabled (bookings, users).
+ * - `deleteAction` → a bound server action powers the delete button (cars,
+ *   bookings); omitted → disabled (users).
+ * @param {{ editHref?: string, deleteAction?: () => Promise<any>, deleteConfirm?: string }} props
  */
-export function RowActions({ editHref }) {
+export function RowActions({ editHref, deleteAction, deleteConfirm }) {
   return (
     <div className="flex items-center gap-1.5">
       {editHref ? (
@@ -26,20 +29,24 @@ export function RowActions({ editHref }) {
         <button
           type="button"
           disabled
-          title="Enabled once the backend is connected"
+          title="Editing isn't available here"
           className={cn(iconButtonClass, "text-slate-500 hover:bg-slate-50")}
         >
           <PencilIcon size={15} />
         </button>
       )}
-      <button
-        type="button"
-        disabled
-        title="Enabled once the backend is connected"
-        className={cn(iconButtonClass, "text-red-500 hover:bg-red-50")}
-      >
-        <TrashIcon size={15} />
-      </button>
+      {deleteAction ? (
+        <DeleteButton action={deleteAction} confirmMessage={deleteConfirm} />
+      ) : (
+        <button
+          type="button"
+          disabled
+          title="Enabled once the backend is connected"
+          className={cn(iconButtonClass, "text-red-500 hover:bg-red-50")}
+        >
+          <TrashIcon size={15} />
+        </button>
+      )}
     </div>
   );
 }
