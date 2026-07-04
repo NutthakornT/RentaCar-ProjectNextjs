@@ -1,4 +1,3 @@
-import { bookings } from "@/lib/mock/bookings";
 import { createClient as createServerSupabaseClient } from "@/lib/supabase/server";
 
 /**
@@ -97,13 +96,23 @@ export async function getBookingsByUser(userId) {
   return (data ?? []).map(mapBookingRow);
 }
 
-/** Aggregate booking stats for the admin dashboard. */
+/**
+ * Aggregate booking stats for the admin dashboard. Uses the cookie-aware
+ * server client so RLS returns every booking for an admin session.
+ */
 export async function getBookingStats() {
-  const total = bookings.length;
-  const active = bookings.filter((b) => b.status === "active").length;
-  const upcoming = bookings.filter((b) => b.status === "confirmed").length;
-  const revenue = bookings
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("status, total_price");
+  if (error) throw error;
+
+  const rows = data ?? [];
+  const total = rows.length;
+  const active = rows.filter((b) => b.status === "active").length;
+  const upcoming = rows.filter((b) => b.status === "confirmed").length;
+  const revenue = rows
     .filter((b) => b.status !== "cancelled")
-    .reduce((sum, b) => sum + b.total_price, 0);
+    .reduce((sum, b) => sum + Number(b.total_price), 0);
   return { total, active, upcoming, revenue };
 }
