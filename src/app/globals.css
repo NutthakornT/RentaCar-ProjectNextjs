@@ -1,26 +1,124 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  DriveLux design system — Tailwind v4 theme tokens.
+  Premium, spacious, rounded, soft shadows, subtle gradients.
+  Palette per spec: primary #0F4C81, accent #F6C445, background #F8FAFC.
+*/
+@theme {
+  /* Brand — primary (deep ocean blue) */
+  --color-primary-50: #eef5fb;
+  --color-primary-100: #d6e6f4;
+  --color-primary-200: #aecce8;
+  --color-primary-300: #7dabd6;
+  --color-primary-400: #4a84be;
+  --color-primary-500: #2867a3;
+  --color-primary-600: #0f4c81;
+  --color-primary-700: #0d3f6b;
+  --color-primary-800: #0f3556;
+  --color-primary-900: #102c47;
+  --color-primary: #0f4c81;
+
+  /* Brand — accent (warm gold) */
+  --color-accent-50: #fef9e8;
+  --color-accent-100: #fdf0c4;
+  --color-accent-200: #fbe28c;
+  --color-accent-300: #f9d15a;
+  --color-accent-400: #f6c445;
+  --color-accent-500: #eaa91f;
+  --color-accent-600: #cf8515;
+  --color-accent: #f6c445;
+
+  /* Surfaces */
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-muted: #f1f5f9;
+
+  /* Fonts (Geist, injected by root layout) */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Rounded, premium radii */
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.75rem;
+
+  /* Soft, layered shadows */
+  --shadow-soft: 0 4px 20px -8px rgb(15 76 129 / 0.14);
+  --shadow-card: 0 10px 30px -14px rgb(15 76 129 / 0.22);
+  --shadow-lift: 0 22px 48px -20px rgb(15 76 129 / 0.28);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background-color: var(--color-background);
+    color: #0f172a;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-primary-600);
+    color: #fff;
+  }
+
+  /* Consistent, accessible focus ring across interactive elements */
+  :where(a, button, input, select, textarea):focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .container-page {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 80rem; /* 1280px */
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 1024px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Subtle brand gradient used on hero / CTAs */
+  .bg-brand-gradient {
+    background-image: linear-gradient(135deg, #0f4c81 0%, #0d3f6b 55%, #102c47 100%);
+  }
+
+  .bg-hero-gradient {
+    background-image:
+      radial-gradient(120% 120% at 85% 10%, rgba(246, 196, 69, 0.18) 0%, transparent 45%),
+      linear-gradient(135deg, #0f4c81 0%, #0d3f6b 60%, #102c47 100%);
+  }
+
+  .text-gradient-gold {
+    background-image: linear-gradient(90deg, #f6c445 0%, #eaa91f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Reveal-on-scroll-free entrance for above-the-fold polish */
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-up {
+    animation: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
 }
