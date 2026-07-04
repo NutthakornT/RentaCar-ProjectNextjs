@@ -36,8 +36,8 @@ export default async function AdminCarsPage() {
       />
       <DemoBanner>
         <span className="font-semibold">Live data.</span> Cars are stored in
-        Supabase — adding a car here makes it visible on the public site
-        immediately. Edit and delete are still scaffolded and disabled below.
+        Supabase — adding or editing a car here updates the public site
+        immediately. Delete is still scaffolded and disabled below.
       </DemoBanner>
 
       {cars.length === 0 ? (
@@ -86,7 +86,7 @@ export default async function AdminCarsPage() {
                 )}
               </Td>
               <Td>
-                <RowActions />
+                <RowActions editHref={`/admin/cars/${car.id}/edit`} />
               </Td>
             </tr>
           ))}
