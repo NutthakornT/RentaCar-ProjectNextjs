@@ -216,3 +216,22 @@ export async function createCar(payload) {
   if (error) throw error;
   return mapCarRow(data);
 }
+
+/**
+ * Update an existing car (e.g. marking it out of stock). Requires an
+ * authenticated admin session — RLS rejects the update otherwise.
+ * @param {string} id
+ * @param {Partial<Omit<Car, "id"|"rating"|"reviews_count">>} payload
+ * @returns {Promise<Car>}
+ */
+export async function updateCar(id, payload) {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("cars")
+    .update(payload)
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return mapCarRow(data);
+}

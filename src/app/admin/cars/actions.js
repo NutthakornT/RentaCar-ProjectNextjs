@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createCar } from "@/services/cars";
+import { createCar, updateCar } from "@/services/cars";
 import { CAR_TYPES, TRANSMISSIONS, FUELS } from "@/lib/constants";
 
 /** Turn "BMW" + "X5 xDrive40i" into the slug id "bmw-x5-xdrive40i". */
@@ -15,15 +15,11 @@ function slugify(value) {
 }
 
 /**
- * Server Action backing the admin "add car" form. Validates input against the
- * same constraints as the `cars` table, derives a URL-safe slug id, and
- * inserts via the cars service. RLS on the `cars` table requires the caller
- * to be signed in with an admin profile — a non-admin gets a rejected insert,
- * surfaced here as a friendly error rather than a crash.
- * @param {{ error: string | null }} _prevState
- * @param {FormData} formData
+ * Validate and normalize the shared car form fields (add + edit use the same
+ * form). Returns `{ error }` on the first invalid field, otherwise `{ values }`
+ * shaped for the `cars` service functions.
  */
-export async function addCar(_prevState, formData) {
+function parseCarForm(formData) {
   const brand = String(formData.get("brand") || "").trim();
   const name = String(formData.get("name") || "").trim();
   const type = String(formData.get("type") || "");
@@ -37,6 +33,7 @@ export async function addCar(_prevState, formData) {
   const tagline = String(formData.get("tagline") || "").trim() || null;
   const imageUrl = String(formData.get("image_url") || "").trim() || null;
   const featuresRaw = String(formData.get("features") || "");
+  const available = formData.get("available") !== "false";
 
   if (!brand) return { error: "Brand is required." };
   if (!name) return { error: "Model name is required." };
@@ -49,19 +46,15 @@ export async function addCar(_prevState, formData) {
   if (!Number.isInteger(seats) || seats < 1)
     return { error: "Enter a valid seat count (whole number, at least 1)." };
 
-  const id = slugify(`${brand}-${name}`);
-  if (!id) return { error: "Could not derive an id from brand and name." };
-
   const features = featuresRaw
     .split(",")
     .map((f) => f.trim())
     .filter(Boolean);
 
-  try {
-    await createCar({
-      id,
-      name,
+  return {
+    values: {
       brand,
+      name,
       type,
       transmission,
       fuel,
@@ -73,8 +66,30 @@ export async function addCar(_prevState, formData) {
       tagline,
       image_url: imageUrl,
       features,
-      available: true,
-    });
+      available,
+    },
+  };
+}
+
+/**
+ * Server Action backing the admin "add car" form. Validates input against the
+ * same constraints as the `cars` table, derives a URL-safe slug id, and
+ * inserts via the cars service. RLS on the `cars` table requires the caller
+ * to be signed in with an admin profile — a non-admin gets a rejected insert,
+ * surfaced here as a friendly error rather than a crash.
+ * @param {{ error: string | null }} _prevState
+ * @param {FormData} formData
+ */
+export async function addCar(_prevState, formData) {
+  const parsed = parseCarForm(formData);
+  if (parsed.error) return parsed;
+
+  const { values } = parsed;
+  const id = slugify(`${values.brand}-${values.name}`);
+  if (!id) return { error: "Could not derive an id from brand and name." };
+
+  try {
+    await createCar({ id, ...values });
   } catch (err) {
     if (err?.code === "23505") {
       return {
@@ -89,6 +104,37 @@ export async function addCar(_prevState, formData) {
   }
 
   revalidatePath("/admin/cars");
+  revalidatePath("/cars");
+  revalidatePath("/");
+  redirect("/admin/cars");
+}
+
+/**
+ * Server Action backing the admin "edit car" form. The id (URL slug) is
+ * immutable once created — bookings and car detail links reference it — so
+ * only the fields validated by `parseCarForm` are updated.
+ * @param {{ error: string | null }} _prevState
+ * @param {FormData} formData
+ */
+export async function editCar(_prevState, formData) {
+  const id = String(formData.get("id") || "");
+  if (!id) return { error: "Missing car id." };
+
+  const parsed = parseCarForm(formData);
+  if (parsed.error) return parsed;
+
+  try {
+    await updateCar(id, parsed.values);
+  } catch (err) {
+    return {
+      error:
+        err?.message ??
+        "Could not update the car. Make sure you're signed in with an admin account.",
+    };
+  }
+
+  revalidatePath("/admin/cars");
+  revalidatePath(`/cars/${id}`);
   revalidatePath("/cars");
   revalidatePath("/");
   redirect("/admin/cars");
