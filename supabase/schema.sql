@@ -3,7 +3,7 @@
 -- Run once in Supabase Dashboard → SQL Editor → New query
 -- Safe to re-run: tables/policies/triggers are dropped/recreated idempotently.
 --
--- Tables: profiles, cars, car_images, bookings, reviews
+-- Tables: profiles, cars, bookings, reviews, car_returns
 -- ============================================================
 
 create extension if not exists pgcrypto; -- for gen_random_uuid()
@@ -56,21 +56,27 @@ create index if not exists idx_cars_type on public.cars (type);
 create index if not exists idx_cars_available on public.cars (available);
 
 -- ------------------------------------------------------------
--- car_images — ordered gallery photos per car
--- cars.image_url remains the cover image; this table holds additional angles
+-- car_returns — one return record per booking
+-- Customer requests a return; an admin confirms it (actual return date,
+-- condition, and any late fee) and closes out the booking.
 -- ------------------------------------------------------------
-create table if not exists public.car_images (
+create table if not exists public.car_returns (
   id uuid primary key default gen_random_uuid(),
-  car_id text not null references public.cars (id) on delete cascade,
-  image_url text not null,
-  sort_order integer not null default 0,
+  booking_id uuid not null references public.bookings (id) on delete cascade,
+  status text not null default 'requested' check (status in ('requested', 'completed')),
+  requested_at timestamptz not null default now(),
+  returned_at timestamptz,
+  condition_notes text,
+  late_days integer not null default 0 check (late_days >= 0),
+  late_fee numeric(10, 2) not null default 0 check (late_fee >= 0),
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  unique (booking_id)
 );
 
-comment on table public.car_images is 'Ordered gallery photos for a car.';
+comment on table public.car_returns is 'One return record per booking: requested by the customer, confirmed by an admin.';
 
-create index if not exists idx_car_images_car_id on public.car_images (car_id, sort_order);
+create index if not exists idx_car_returns_status on public.car_returns (status);
 
 -- ------------------------------------------------------------
 -- bookings — customer rentals
@@ -107,6 +113,7 @@ create table if not exists public.reviews (
   booking_id uuid references public.bookings (id) on delete set null,
   rating integer not null check (rating between 1 and 5),
   comment text,
+  reviewer_name text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (booking_id)
@@ -140,9 +147,9 @@ create trigger set_cars_updated_at
 before update on public.cars
 for each row execute function public.set_updated_at();
 
-drop trigger if exists set_car_images_updated_at on public.car_images;
-create trigger set_car_images_updated_at
-before update on public.car_images
+drop trigger if exists set_car_returns_updated_at on public.car_returns;
+create trigger set_car_returns_updated_at
+before update on public.car_returns
 for each row execute function public.set_updated_at();
 
 drop trigger if exists set_bookings_updated_at on public.bookings;
@@ -260,7 +267,7 @@ for each row execute function public.refresh_car_rating();
 -- ------------------------------------------------------------
 alter table public.profiles enable row level security;
 alter table public.cars enable row level security;
-alter table public.car_images enable row level security;
+alter table public.car_returns enable row level security;
 alter table public.bookings enable row level security;
 alter table public.reviews enable row level security;
 
@@ -298,26 +305,39 @@ create policy "cars_delete"
 on public.cars for delete
 using (public.is_admin());
 
--- car_images: readable by everyone; writable by admins only
-drop policy if exists "car_images_select" on public.car_images;
-create policy "car_images_select"
-on public.car_images for select
-using (true);
+-- car_returns: a customer sees/creates returns for their own bookings; an
+-- admin sees all and confirms (updates) or deletes them
+drop policy if exists "car_returns_select" on public.car_returns;
+create policy "car_returns_select"
+on public.car_returns for select
+using (
+  public.is_admin()
+  or exists (
+    select 1 from public.bookings b
+    where b.id = booking_id and b.user_id = auth.uid()
+  )
+);
 
-drop policy if exists "car_images_insert" on public.car_images;
-create policy "car_images_insert"
-on public.car_images for insert
-with check (public.is_admin());
+drop policy if exists "car_returns_insert" on public.car_returns;
+create policy "car_returns_insert"
+on public.car_returns for insert
+with check (
+  public.is_admin()
+  or exists (
+    select 1 from public.bookings b
+    where b.id = booking_id and b.user_id = auth.uid()
+  )
+);
 
-drop policy if exists "car_images_update" on public.car_images;
-create policy "car_images_update"
-on public.car_images for update
+drop policy if exists "car_returns_update" on public.car_returns;
+create policy "car_returns_update"
+on public.car_returns for update
 using (public.is_admin())
 with check (public.is_admin());
 
-drop policy if exists "car_images_delete" on public.car_images;
-create policy "car_images_delete"
-on public.car_images for delete
+drop policy if exists "car_returns_delete" on public.car_returns;
+create policy "car_returns_delete"
+on public.car_returns for delete
 using (public.is_admin());
 
 -- bookings: a user sees/creates/cancels their own; admins manage all
@@ -380,8 +400,7 @@ using (auth.uid() = user_id or public.is_admin());
 grant select on public.cars to anon, authenticated;
 grant insert, update, delete on public.cars to authenticated;
 
-grant select on public.car_images to anon, authenticated;
-grant insert, update, delete on public.car_images to authenticated;
+grant select, insert, update, delete on public.car_returns to authenticated;
 
 grant select, update on public.profiles to authenticated;
 
