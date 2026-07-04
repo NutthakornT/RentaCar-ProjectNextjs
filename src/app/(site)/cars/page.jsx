@@ -20,6 +20,11 @@ function toNumber(value) {
 
 export default async function CarsPage({ searchParams }) {
   const sp = await searchParams;
+
+  console.log("searchParams =", sp); // kik
+  console.log("maxPrice =", sp.maxPrice);// kik
+  console.log("maxPrice Number =", toNumber(sp.maxPrice)); // kik
+
   const options = await getFilterOptions();
 
   const { items, total, page, totalPages } = await getCars({

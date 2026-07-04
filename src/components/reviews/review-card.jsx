@@ -1,4 +1,5 @@
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { cn, formatDate,} from "@/lib/utils";
 import { Rating } from "@/components/ui/rating";
 
 /** Initials avatar derived from a name. */
@@ -16,7 +17,9 @@ function Avatar({ name }) {
 }
 
 /**
- * @param {{ review: import("@/types").Testimonial, className?: string }} props
+//  * @param {{ review: import("@/types").Testimonial, className?: string }} props
+
+ *  @param {{ review: import("@/types").Review, className?: string }} props
  */
 export function ReviewCard({ review, className }) {
   return (
@@ -27,6 +30,8 @@ export function ReviewCard({ review, className }) {
       )}
     >
       <Rating value={review.rating} size={16} showValue={false} />
+
+
       <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-slate-700">
         “{review.quote}”
       </blockquote>

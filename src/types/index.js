@@ -69,4 +69,17 @@
  * @property {string} [sort]
  */
 
+// เพิ่มReview type definition
+/**
+ * @typedef {Object} Review
+ * @property {string} id
+ * @property {string} user_id
+ * @property {string} car_id
+ * @property {string|null} [booking_id]
+ * @property {number} rating
+ * @property {string|null} [comment]
+ * @property {string} created_at
+ * @property {string} [author_name]
+ * @property {string} [car_name]
+ */
 export {};
