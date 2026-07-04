@@ -34,7 +34,7 @@ export default async function AdminUsersPage() {
         title="Users"
         description={`${users.length} registered customers.`}
       />
-      <DemoBanner />
+      {/* <DemoBanner /> */}
 
       <Table head={["Customer", "Email", "Role", "Joined", "Bookings", ""]}>
         {users.map((u) => (
