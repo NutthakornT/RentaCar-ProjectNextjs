@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 import { buttonVariants } from "@/components/ui/button";
-import { MenuIcon, XIcon, UserIcon, LogOutIcon } from "@/components/ui/icons";
+import { MenuIcon, XIcon, UserIcon, LogOutIcon, ShieldIcon } from "@/components/ui/icons";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -17,10 +17,11 @@ const navLinks = [
 
 /**
  * Public site navigation. Auth-aware: shows sign-in/up when signed out,
- * profile + sign-out when signed in. Sign out uses the existing server action.
- * @param {{ user: { email?: string } | null, signOut: () => void }} props
+ * profile + sign-out when signed in, and an Admin link for admin profiles.
+ * Sign out uses the existing server action.
+ * @param {{ user: { email?: string } | null, isAdmin?: boolean, signOut: () => void }} props
  */
-export function Navbar({ user, signOut }) {
+export function Navbar({ user, isAdmin = false, signOut }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -55,6 +56,15 @@ export function Navbar({ user, signOut }) {
         <div className="hidden items-center gap-2 lg:flex">
           {user ? (
             <>
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  className={buttonVariants({ variant: "secondary", size: "sm" })}
+                >
+                  <ShieldIcon size={16} />
+                  Admin
+                </Link>
+              )}
               <Link
                 href="/profile"
                 className={buttonVariants({ variant: "ghost", size: "sm" })}
@@ -120,6 +130,15 @@ export function Navbar({ user, signOut }) {
             <div className="flex flex-col gap-2 pt-3">
               {user ? (
                 <>
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setOpen(false)}
+                      className={buttonVariants({ variant: "secondary", size: "md" })}
+                    >
+                      <ShieldIcon size={16} /> Admin
+                    </Link>
+                  )}
                   <Link
                     href="/profile"
                     onClick={() => setOpen(false)}
