@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createCar, updateCar } from "@/services/cars";
+import { createCar, updateCar, deleteCar } from "@/services/cars";
 import { CAR_TYPES, TRANSMISSIONS, FUELS } from "@/lib/constants";
 
 /** Turn "BMW" + "X5 xDrive40i" into the slug id "bmw-x5-xdrive40i". */
@@ -138,4 +138,29 @@ export async function editCar(_prevState, formData) {
   revalidatePath("/cars");
   revalidatePath("/");
   redirect("/admin/cars");
+}
+
+/**
+ * Server Action to delete a car. The id is bound via `.bind()` and invoked
+ * from the delete button's event handler (not a form), so it returns
+ * `{ error }` on failure instead of throwing — including the common case of a
+ * car that still has bookings (FK `on delete restrict`, Postgres code 23503).
+ * @param {string} id
+ * @returns {Promise<{ error: string } | void>}
+ */
+export async function removeCar(id) {
+  try {
+    await deleteCar(id);
+  } catch (err) {
+    if (err?.code === "23503") {
+      return {
+        error:
+          "This car has bookings and can't be deleted. Mark it out of stock instead.",
+      };
+    }
+    return { error: err?.message ?? "Could not delete the car." };
+  }
+  revalidatePath("/admin/cars");
+  revalidatePath("/cars");
+  revalidatePath("/");
 }

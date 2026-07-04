@@ -77,6 +77,18 @@ export async function createBooking(payload) {
 }
 
 /**
+ * Delete a booking. Requires an authenticated admin session (RLS). A linked
+ * review's `booking_id` is set null (FK `on delete set null`), so this won't
+ * cascade-delete reviews.
+ * @param {string} id
+ */
+export async function deleteBooking(id) {
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.from("bookings").delete().eq("id", id);
+  if (error) throw error;
+}
+
+/**
  * A single customer's bookings, newest pick-up first. Uses the cookie-aware
  * server client; RLS already restricts a non-admin to their own rows, and the
  * explicit `user_id` filter keeps the query correct for an admin session too.
