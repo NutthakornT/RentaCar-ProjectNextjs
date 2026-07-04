@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 import { daysBetween, formatCurrency, formatDate, todayISO } from "@/lib/utils";
 import { SERVICE_FEE } from "@/lib/constants";
 import { confirmBooking } from "@/app/(site)/booking/actions";
@@ -71,6 +72,19 @@ export function BookingFlow({ car, initialPickup = "", initialReturn = "", userI
       router.push(`/login?next=${encodeURIComponent(bookingReturnUrl())}`);
       return;
     }
+
+    const confirm = await Swal.fire({
+      title: "Heads up",
+      text: "Returning the car late will incur a $50 fine per day. Do you want to confirm this booking?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Confirm booking",
+      cancelButtonText: "Go back",
+      confirmButtonColor: "#0F4C81",
+      cancelButtonColor: "#64748b",
+      reverseButtons: true,
+    });
+    if (!confirm.isConfirmed) return;
 
     setSubmitting(true);
     setSubmitError("");

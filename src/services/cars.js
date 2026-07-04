@@ -235,3 +235,15 @@ export async function updateCar(id, payload) {
   if (error) throw error;
   return mapCarRow(data);
 }
+
+/**
+ * Delete a car. Requires an authenticated admin session (RLS). The `bookings`
+ * FK is `on delete restrict`, so Postgres rejects deleting a car that still
+ * has bookings — the caller surfaces that as a friendly message.
+ * @param {string} id
+ */
+export async function deleteCar(id) {
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.from("cars").delete().eq("id", id);
+  if (error) throw error;
+}
