@@ -7,6 +7,7 @@ import {
   DemoBanner,
 } from "@/components/admin/admin-ui";
 import { RowActions } from "@/components/admin/row-actions";
+import { removeBooking } from "./actions";
 import { BookingStatusBadge } from "@/components/booking/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ClipboardIcon } from "@/components/ui/icons";
@@ -24,8 +25,8 @@ export default async function AdminBookingsPage() {
       />
       <DemoBanner>
         <span className="font-semibold">Live data.</span> Bookings are read
-        from Supabase. Row actions (edit, cancel) are still scaffolded and will
-        be wired up next.
+        from Supabase. You can delete a booking here; editing isn&apos;t
+        available.
       </DemoBanner>
 
       {bookings.length === 0 ? (
@@ -56,7 +57,10 @@ export default async function AdminBookingsPage() {
                 {formatCurrency(b.total_price)}
               </Td>
               <Td>
-                <RowActions />
+                <RowActions
+                  deleteAction={removeBooking.bind(null, b.id)}
+                  deleteConfirm={`Delete booking ${b.id.slice(0, 8).toUpperCase()}? This can't be undone.`}
+                />
               </Td>
             </tr>
           ))}
