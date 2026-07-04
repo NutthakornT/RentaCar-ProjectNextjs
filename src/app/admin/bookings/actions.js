@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { deleteBooking } from "@/services/bookings";
+import { confirmReturn } from "@/services/returns";
 
 /**
  * Server Action to delete a booking. The id is bound via `.bind()` and invoked
@@ -18,4 +19,25 @@ export async function removeBooking(id) {
   }
   revalidatePath("/admin/bookings");
   revalidatePath("/admin");
+}
+
+/**
+ * Server Action for an admin confirming a car return. The booking id is bound
+ * via `.bind()`; `details` carries the actual return date and condition notes.
+ * Returns the computed late fee so the caller can report it. RLS requires an
+ * admin session.
+ * @param {string} bookingId
+ * @param {{ returnedAt: string, conditionNotes?: string }} details
+ * @returns {Promise<{ ok: true, lateDays: number, lateFee: number } | { error: string }>}
+ */
+export async function confirmReturnAction(bookingId, details) {
+  try {
+    const { lateDays, lateFee } = await confirmReturn(bookingId, details);
+    revalidatePath("/admin/bookings");
+    revalidatePath("/admin");
+    revalidatePath("/profile");
+    return { ok: true, lateDays, lateFee };
+  } catch (err) {
+    return { error: err?.message ?? "Could not confirm the return." };
+  }
 }

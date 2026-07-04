@@ -15,7 +15,7 @@ const columns = [
   {
     title: "Company",
     links: [
-      { label: "Why DriveLux", href: "/#why" },
+      { label: "Why ChaoRoad", href: "/#why" },
       { label: "Reviews", href: "/#reviews" },
       { label: "Sign in", href: "/login" },
       { label: "Create account", href: "/signup" },

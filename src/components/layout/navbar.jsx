@@ -11,7 +11,7 @@ import { MenuIcon, XIcon, UserIcon, LogOutIcon, ShieldIcon } from "@/components/
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Browse Cars", href: "/cars" },
-  { label: "Why DriveLux", href: "/#why" },
+  { label: "Why ChaoRoad", href: "/#why" },
   { label: "Reviews", href: "/#reviews" },
 ];
 

@@ -40,7 +40,7 @@ export function DeleteButton({
           title: "Couldn't delete",
           text: res.error,
           icon: "error",
-          confirmButtonColor: "#0F4C81",
+          confirmButtonColor: "#2f6fb0",
         });
         return;
       }

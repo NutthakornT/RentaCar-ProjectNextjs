@@ -35,11 +35,11 @@ export default async function AdminCarsPage() {
           </Link>
         }
       />
-      <DemoBanner>
+      {/* <DemoBanner>
         <span className="font-semibold">Live data.</span> Cars are stored in
         Supabase — add, edit, and delete all update the public site
         immediately.
-      </DemoBanner>
+      </DemoBanner> */}
 
       {cars.length === 0 ? (
         <EmptyState
@@ -57,7 +57,17 @@ export default async function AdminCarsPage() {
           }
         />
       ) : (
-        <Table head={["Car", "Type", "Transmission", "Fuel", "Price / day", "Status", ""]}>
+        <Table
+          head={[
+            "Car",
+            "Type",
+            "Transmission",
+            "Fuel",
+            "Price / day",
+            "Status",
+            "",
+          ]}
+        >
           {cars.map((car) => (
             <tr key={car.id} className="hover:bg-slate-50/60">
               <Td>

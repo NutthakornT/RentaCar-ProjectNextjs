@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Hero } from "@/components/home/hero";
+import { Marquee } from "@/components/home/marquee";
 import { FeaturedCars } from "@/components/home/featured-cars";
 import { WhyChooseUs } from "@/components/home/why-choose-us";
 import { Testimonials } from "@/components/home/testimonials";
@@ -9,7 +10,7 @@ import { ArrowRightIcon } from "@/components/ui/icons";
 export const metadata = {
   title: "Premium Car Rental",
   description:
-    "Rent premium, meticulously maintained cars by the day. Transparent pricing, instant booking, and 24/7 support with DriveLux.",
+    "Rent premium, meticulously maintained cars by the day. Transparent pricing, instant booking, and 24/7 support with ChaoRoad.",
   alternates: { canonical: "/" },
 };
 
@@ -17,6 +18,7 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <Marquee />
       <FeaturedCars />
       <WhyChooseUs />
       <Testimonials />

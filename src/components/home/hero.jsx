@@ -29,8 +29,9 @@ export function Hero() {
           </h1>
 
           <p className="animate-fade-up mx-auto mt-5 max-w-xl text-lg text-slate-200">
-            Hand-picked, meticulously maintained cars available by the day.
-            Transparent pricing, instant confirmation, zero hidden fees.
+            รถยนต์ที่มีคุณภาพสูง นำเข้ามาอย่างดี ดูแลอย่างละเอียด
+            พร้อมให้เช่ารายวัน ราคาที่ชัดเจน ยืนยันการเช่าได้ทันที
+            ไม่มีค่าใช้จ่ายเพิ่มเติมใดๆ
           </p>
 
           <div className="animate-fade-up mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -49,7 +50,7 @@ export function Hero() {
             </Link>
           </div>
 
-          {/* Trust stats */}
+          {/* Trust stats
           <dl className="mx-auto mt-12 grid max-w-lg grid-cols-3 gap-4">
             {stats.map((s) => (
               <div key={s.label} className="text-center">
@@ -61,16 +62,16 @@ export function Hero() {
                 </dd>
               </div>
             ))}
-          </dl>
+          </dl> */}
 
-          <div className="mt-6 flex items-center justify-center gap-1 text-accent-400">
+          {/* <div className="mt-6 flex items-center justify-center gap-1 text-accent-400">
             {Array.from({ length: 5 }).map((_, i) => (
               <StarIcon key={i} size={16} filled />
             ))}
             <span className="ml-2 text-sm text-slate-300">
               Rated excellent by 12,000+ drivers
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
 

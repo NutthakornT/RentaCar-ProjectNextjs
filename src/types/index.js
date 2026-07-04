@@ -57,6 +57,12 @@
  * @property {string} [pickup_location]
  * @property {string} [phone]
  * @property {string|null} [notes]
+ * @property {"requested"|"completed"|null} [return_status]
+ * @property {string|null} [returned_at]
+ * @property {number} [late_days]
+ * @property {number} [late_fee]
+ * @property {boolean} [reviewed]
+ * @property {number|null} [review_rating]
  *
  * @typedef {Object} CarFilters
  * @property {string} [q]
