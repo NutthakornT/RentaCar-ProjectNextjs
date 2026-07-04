@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export const metadata = {
   title: "Complete your booking",
-  description: "Confirm your rental dates and driver details with DriveLux.",
+  description: "Confirm your rental dates and driver details with ChaoRoad.",
   robots: { index: false },
 };
 

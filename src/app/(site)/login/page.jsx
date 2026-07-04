@@ -5,7 +5,7 @@ import { EmailAuthForm } from "@/components/auth/email-auth-form";
 
 export const metadata = {
   title: "Sign in",
-  description: "Sign in to your DriveLux account to manage bookings.",
+  description: "Sign in to your ChaoRoad account to manage bookings.",
   robots: { index: false },
 };
 
@@ -20,7 +20,7 @@ export default async function LoginPage({ searchParams }) {
       subtitle="Sign in to book cars and manage your trips."
       footer={
         <>
-          New to DriveLux?{" "}
+          New to ChaoRoad?{" "}
           <Link
             href={`/signup${next !== "/" ? `?next=${encodeURIComponent(next)}` : ""}`}
             className="font-semibold text-primary-600 hover:text-primary-700"

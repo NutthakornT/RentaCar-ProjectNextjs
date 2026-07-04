@@ -5,7 +5,7 @@ import { EmailAuthForm } from "@/components/auth/email-auth-form";
 
 export const metadata = {
   title: "Create your account",
-  description: "Join DriveLux to book premium cars in minutes.",
+  description: "Join ChaoRoad to book premium cars in minutes.",
   robots: { index: false },
 };
 

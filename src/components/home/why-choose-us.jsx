@@ -32,12 +32,12 @@ const features = [
   {
     icon: RouteIcon,
     title: "Flexible pickup",
-    body: "Choose the pickup location and time that suit you. Extend or adjust your booking with a tap.",
+    body: "Choose a convenient location and time for product pickup anywhere in Bangkok.",
   },
   {
     icon: HeadsetIcon,
     title: "Real human support",
-    body: "Our team answers fast, any hour of the day. Talk to a person, not a phone tree.",
+    body: "Our team answers fast, any hour of the day. ",
   },
 ];
 
@@ -46,7 +46,7 @@ export function WhyChooseUs() {
     <section id="why" className="scroll-mt-20 bg-white py-20 sm:py-24">
       <div className="container-page">
         <SectionHeading
-          eyebrow="Why DriveLux"
+          eyebrow="Why ChaoRoad"
           title="Renting a car, finally done right"
           description="We rebuilt the rental experience around the things that actually matter to you."
         />
