@@ -10,7 +10,12 @@ import { confirmBooking } from "@/app/(site)/booking/actions";
 import { BookingSummary } from "./booking-summary";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Field, Input, Textarea } from "@/components/ui/field";
-import { CheckIcon, ClockIcon, MailIcon, CalendarIcon } from "@/components/ui/icons";
+import {
+  CheckIcon,
+  ClockIcon,
+  MailIcon,
+  CalendarIcon,
+} from "@/components/ui/icons";
 
 /**
  * Client booking flow: renter details → confirmation. Confirming inserts a
@@ -19,7 +24,13 @@ import { CheckIcon, ClockIcon, MailIcon, CalendarIcon } from "@/components/ui/ic
  * with the customer's profile, so they're collected for display only.)
  * @param {{ car: import("@/types").Car, initialPickup?: string, initialReturn?: string, userId?: string, userEmail?: string }} props
  */
-export function BookingFlow({ car, initialPickup = "", initialReturn = "", userId = "", userEmail = "" }) {
+export function BookingFlow({
+  car,
+  initialPickup = "",
+  initialReturn = "",
+  userId = "",
+  userEmail = "",
+}) {
   const router = useRouter();
   const today = todayISO();
   const [form, setForm] = useState({
@@ -38,8 +49,7 @@ export function BookingFlow({ car, initialPickup = "", initialReturn = "", userI
 
   const days = daysBetween(form.pickup, form.returnDate);
 
-  const set = (key) => (e) =>
-    setForm((f) => ({ ...f, [key]: e.target.value }));
+  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
   function validate() {
     const next = {};
@@ -48,7 +58,8 @@ export function BookingFlow({ car, initialPickup = "", initialReturn = "", userI
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
       next.email = "Enter a valid email address.";
     if (!form.phone.trim()) next.phone = "Please enter your phone number.";
-    if (!form.location.trim()) next.location = "Please enter a pick-up location.";
+    if (!form.location.trim())
+      next.location = "Please enter a pick-up location.";
     if (!form.pickup) next.pickup = "Choose a pick-up date.";
     if (!form.returnDate) next.returnDate = "Choose a return date.";
     else if (days <= 0) next.returnDate = "Return must be after pick-up.";
@@ -75,12 +86,12 @@ export function BookingFlow({ car, initialPickup = "", initialReturn = "", userI
 
     const confirm = await Swal.fire({
       title: "Heads up",
-      text: "Returning the car late will incur a $50 fine per day. Do you want to confirm this booking?",
+      text: "Please check your details. the pickup location should be in Bangkok. Returning the car late will incur a $50 fine per day. Do you want to confirm this booking?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Confirm booking",
       cancelButtonText: "Go back",
-      confirmButtonColor: "#0F4C81",
+      confirmButtonColor: "#2f6fb0",
       cancelButtonColor: "#64748b",
       reverseButtons: true,
     });
@@ -104,16 +115,16 @@ export function BookingFlow({ car, initialPickup = "", initialReturn = "", userI
     }
 
     setConfirmed({
-      ref: "DL-" + result.booking.id.replace(/-/g, "").slice(0, 6).toUpperCase(),
+      ref:
+        "DL-" + result.booking.id.replace(/-/g, "").slice(0, 6).toUpperCase(),
       ...form,
     });
-    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+    if (typeof window !== "undefined")
+      window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   if (confirmed) {
-    return (
-      <ConfirmationView car={car} booking={confirmed} days={days} />
-    );
+    return <ConfirmationView car={car} booking={confirmed} days={days} />;
   }
 
   return (
@@ -238,8 +249,7 @@ function ConfirmationView({ car, booking, days }) {
         </h1>
         <p className="mt-2 text-slate-500">
           We&apos;ve reserved your {car.brand} {car.name}. A confirmation is on
-          its
-          way to {booking.email}.
+          its way to {booking.email}.
         </p>
 
         <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-semibold text-primary-700">
@@ -247,17 +257,39 @@ function ConfirmationView({ car, booking, days }) {
         </div>
 
         <dl className="mt-8 grid gap-px overflow-hidden rounded-2xl bg-slate-200/70 text-left sm:grid-cols-2">
-          <Detail icon={CalendarIcon} label="Pick-up" value={`${formatDate(booking.pickup)} · ${booking.location}`} />
-          <Detail icon={CalendarIcon} label="Return" value={formatDate(booking.returnDate)} />
-          <Detail icon={ClockIcon} label="Duration" value={`${days} ${days === 1 ? "day" : "days"}`} />
-          <Detail icon={CheckIcon} label="Total (pay at pick-up)" value={formatCurrency(days * car.price_per_day + SERVICE_FEE)} />
+          <Detail
+            icon={CalendarIcon}
+            label="Pick-up"
+            value={`${formatDate(booking.pickup)} · ${booking.location}`}
+          />
+          <Detail
+            icon={CalendarIcon}
+            label="Return"
+            value={formatDate(booking.returnDate)}
+          />
+          <Detail
+            icon={ClockIcon}
+            label="Duration"
+            value={`${days} ${days === 1 ? "day" : "days"}`}
+          />
+          <Detail
+            icon={CheckIcon}
+            label="Total (pay at pick-up)"
+            value={formatCurrency(days * car.price_per_day + SERVICE_FEE)}
+          />
         </dl>
 
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <Link href="/profile" className={buttonVariants({ variant: "primary", size: "md" })}>
+          <Link
+            href="/profile"
+            className={buttonVariants({ variant: "primary", size: "md" })}
+          >
             View my bookings
           </Link>
-          <Link href="/cars" className={buttonVariants({ variant: "secondary", size: "md" })}>
+          <Link
+            href="/cars"
+            className={buttonVariants({ variant: "secondary", size: "md" })}
+          >
             Browse more cars
           </Link>
         </div>
