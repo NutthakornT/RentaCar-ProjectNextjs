@@ -4,6 +4,9 @@ import { signOut } from "@/app/auth/actions";
 import { getBookingsByUser } from "@/services/bookings";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { BookingStatusBadge } from "@/components/booking/status-badge";
+import { ReturnButton } from "@/components/booking/return-button";
+import { ReviewButton } from "@/components/booking/review-button";
+import { submitReturnRequest, submitReview } from "./actions";
 import { buttonVariants } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
@@ -15,7 +18,7 @@ import {
 
 export const metadata = {
   title: "My account",
-  description: "Manage your DriveLux profile and view your bookings.",
+  description: "Manage your ChaoRoad profile and view your bookings.",
   robots: { index: false },
 };
 
@@ -112,7 +115,7 @@ export default async function ProfilePage() {
         <div>
           <h2 className="text-lg font-semibold text-slate-900">Your bookings</h2>
           <p className="text-sm text-slate-500">
-            Trips you&apos;ve booked with DriveLux.
+            Trips you&apos;ve booked with ChaoRoad.
           </p>
 
           <div className="mt-5 space-y-4">
@@ -154,6 +157,36 @@ export default async function ProfilePage() {
                     <p className="text-lg font-bold text-slate-900">
                       {formatCurrency(b.total_price)}
                     </p>
+                    {b.status === "completed" || b.return_status === "completed" ? (
+                      <>
+                        <span className="text-sm font-medium text-emerald-600">
+                          Returned
+                          {b.late_fee > 0 && ` · $${b.late_fee} late fee`}
+                        </span>
+                        {b.reviewed ? (
+                          <span className="text-sm text-slate-400">
+                            ★ Reviewed
+                          </span>
+                        ) : (
+                          <ReviewButton
+                            action={submitReview.bind(null, {
+                              carId: b.car_id,
+                              bookingId: b.id,
+                            })}
+                            carName={b.car_name}
+                          />
+                        )}
+                      </>
+                    ) : b.return_status === "requested" ? (
+                      <span className="text-sm font-medium text-amber-600">
+                        Return requested
+                      </span>
+                    ) : b.status !== "cancelled" ? (
+                      <ReturnButton
+                        action={submitReturnRequest.bind(null, b.id)}
+                        carName={b.car_name}
+                      />
+                    ) : null}
                     <Link
                       href={`/cars/${b.car_id}`}
                       className="text-sm font-medium text-primary-600 hover:text-primary-700"

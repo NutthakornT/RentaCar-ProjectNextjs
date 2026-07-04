@@ -7,8 +7,10 @@ import {
   DemoBanner,
 } from "@/components/admin/admin-ui";
 import { RowActions } from "@/components/admin/row-actions";
-import { removeBooking } from "./actions";
+import { ConfirmReturnButton } from "@/components/admin/confirm-return-button";
+import { removeBooking, confirmReturnAction } from "./actions";
 import { BookingStatusBadge } from "@/components/booking/status-badge";
+import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ClipboardIcon } from "@/components/ui/icons";
 
@@ -23,11 +25,11 @@ export default async function AdminBookingsPage() {
         title="Bookings"
         description={`${bookings.length} bookings across all customers.`}
       />
-      <DemoBanner>
+      {/* <DemoBanner>
         <span className="font-semibold">Live data.</span> Bookings are read
-        from Supabase. You can delete a booking here; editing isn&apos;t
-        available.
-      </DemoBanner>
+        from Supabase. Confirm returns and delete bookings here; editing
+        isn&apos;t available.
+      </DemoBanner> */}
 
       {bookings.length === 0 ? (
         <EmptyState
@@ -37,7 +39,19 @@ export default async function AdminBookingsPage() {
         />
       ) : (
         <Table
-          head={["Reference", "Customer", "Phone", "Car", "Pick-up location", "Pick-up", "Return", "Status", "Total", ""]}
+          head={[
+            "Reference",
+            "Customer",
+            "Phone",
+            "Car",
+            "Pick-up location",
+            "Pick-up",
+            "Return",
+            "Status",
+            "Total",
+            "Return status",
+            "",
+          ]}
         >
           {bookings.map((b) => (
             <tr key={b.id} className="hover:bg-slate-50/60">
@@ -55,6 +69,26 @@ export default async function AdminBookingsPage() {
               </Td>
               <Td className="font-semibold text-slate-900">
                 {formatCurrency(b.total_price)}
+              </Td>
+              <Td>
+                {b.status === "completed" || b.return_status === "completed" ? (
+                  <span className="text-xs font-medium text-emerald-600">
+                    Returned{b.late_fee > 0 && ` · $${b.late_fee} late`}
+                  </span>
+                ) : b.status === "cancelled" ? (
+                  <span className="text-slate-400">—</span>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    {b.return_status === "requested" && (
+                      <Badge tone="accent">Requested</Badge>
+                    )}
+                    <ConfirmReturnButton
+                      action={confirmReturnAction.bind(null, b.id)}
+                      dueDate={formatDate(b.return_date)}
+                      highlighted={b.return_status === "requested"}
+                    />
+                  </div>
+                )}
               </Td>
               <Td>
                 <RowActions

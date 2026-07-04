@@ -13,6 +13,9 @@ import { createClient as createServerSupabaseClient } from "@/lib/supabase/serve
 function mapBookingRow(row) {
   const profile = row.profiles;
   const car = row.cars;
+  // Reverse embeds of the one-to-one car_returns / reviews may arrive as arrays.
+  const ret = Array.isArray(row.car_returns) ? row.car_returns[0] : row.car_returns;
+  const review = Array.isArray(row.reviews) ? row.reviews[0] : row.reviews;
   return {
     id: row.id,
     user_id: row.user_id,
@@ -26,6 +29,12 @@ function mapBookingRow(row) {
     pickup_location: row.pickup_location,
     phone: row.phone,
     notes: row.notes,
+    return_status: ret?.status ?? null,
+    returned_at: ret?.returned_at ?? null,
+    late_days: ret?.late_days ?? 0,
+    late_fee: ret ? Number(ret.late_fee) : 0,
+    reviewed: !!review,
+    review_rating: review?.rating ?? null,
   };
 }
 
@@ -40,7 +49,7 @@ export async function getAllBookings() {
   const { data, error } = await supabase
     .from("bookings")
     .select(
-      "id, user_id, car_id, pickup_date, return_date, total_price, status, pickup_location, phone, notes, profiles(name, email), cars(name, brand)",
+      "id, user_id, car_id, pickup_date, return_date, total_price, status, pickup_location, phone, notes, profiles(name, email), cars(name, brand), car_returns(status, returned_at, late_days, late_fee)",
     )
     .order("pickup_date", { ascending: false });
   if (error) throw error;
@@ -100,7 +109,7 @@ export async function getBookingsByUser(userId) {
   const { data, error } = await supabase
     .from("bookings")
     .select(
-      "id, user_id, car_id, pickup_date, return_date, total_price, status, pickup_location, phone, notes, cars(name, brand)",
+      "id, user_id, car_id, pickup_date, return_date, total_price, status, pickup_location, phone, notes, cars(name, brand), car_returns(status, returned_at, late_days, late_fee), reviews(id, rating)",
     )
     .eq("user_id", userId)
     .order("pickup_date", { ascending: false });
