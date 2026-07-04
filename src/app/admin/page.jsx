@@ -36,7 +36,7 @@ export default async function AdminDashboardPage() {
         title="Dashboard"
         description="An overview of your fleet, bookings, and customers."
       />
-      <DemoBanner />
+      {/* <DemoBanner /> */}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
@@ -80,7 +80,9 @@ export default async function AdminDashboardPage() {
         </Link>
       </div>
 
-      <Table head={["Reference", "Customer", "Car", "Dates", "Status", "Total"]}>
+      <Table
+        head={["Reference", "Customer", "Car", "Dates", "Status", "Total"]}
+      >
         {recent.map((b) => (
           <tr key={b.id} className="hover:bg-slate-50/60">
             <Td className="font-medium text-slate-900">{b.id}</Td>
