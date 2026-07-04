@@ -1,4 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app), wired up with Supabase Auth (GitHub OAuth) and Tailwind CSS.
+
+## Supabase setup
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. In **Project Settings → API**, copy the **Project URL** and **anon public key** into `.env.local`:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=...
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+   ```
+3. Create a GitHub OAuth App at [github.com/settings/developers](https://github.com/settings/developers):
+   - Homepage URL: `http://localhost:3000` (add your production URL later)
+   - Authorization callback URL: `https://<your-project-ref>.supabase.co/auth/v1/callback`
+4. In Supabase, go to **Authentication → Providers → GitHub**, enable it, and paste the GitHub OAuth App's **Client ID** and **Client Secret**.
+5. In **Authentication → URL Configuration**, add `http://localhost:3000/auth/callback` (and your deployed equivalent) to **Redirect URLs**.
+
+## How auth is wired up
+
+- `src/lib/supabase/client.js` / `server.js` — browser and server Supabase clients (`@supabase/ssr`).
+- `src/proxy.js` + `src/lib/supabase/proxy.js` — refreshes the session on every request and redirects signed-out users to `/login` (everything under `/login` and `/auth` stays public).
+- `src/app/login` — GitHub sign-in button.
+- `src/app/auth/callback/route.js` — exchanges the OAuth code for a session.
+- `src/app/auth/actions.js` — sign-out server action.
 
 ## Getting Started
 
