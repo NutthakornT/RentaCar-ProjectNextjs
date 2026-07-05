@@ -30,6 +30,7 @@ function mapBookingRow(row) {
     phone: row.phone,
     notes: row.notes,
     return_status: ret?.status ?? null,
+    scheduled_return_at: ret?.scheduled_return_at ?? null,
     returned_at: ret?.returned_at ?? null,
     late_days: ret?.late_days ?? 0,
     late_fee: ret ? Number(ret.late_fee) : 0,
@@ -49,7 +50,7 @@ export async function getAllBookings() {
   const { data, error } = await supabase
     .from("bookings")
     .select(
-      "id, user_id, car_id, pickup_date, return_date, total_price, status, pickup_location, phone, notes, profiles(name, email), cars(name, brand), car_returns(status, returned_at, late_days, late_fee)",
+      "id, user_id, car_id, pickup_date, return_date, total_price, status, pickup_location, phone, notes, profiles(name, email), cars(name, brand), car_returns(status, scheduled_return_at, returned_at, late_days, late_fee)",
     )
     .order("pickup_date", { ascending: false });
   if (error) throw error;
@@ -109,7 +110,7 @@ export async function getBookingsByUser(userId) {
   const { data, error } = await supabase
     .from("bookings")
     .select(
-      "id, user_id, car_id, pickup_date, return_date, total_price, status, pickup_location, phone, notes, cars(name, brand), car_returns(status, returned_at, late_days, late_fee), reviews(id, rating)",
+      "id, user_id, car_id, pickup_date, return_date, total_price, status, pickup_location, phone, notes, cars(name, brand), car_returns(status, scheduled_return_at, returned_at, late_days, late_fee), reviews(id, rating)",
     )
     .eq("user_id", userId)
     .order("pickup_date", { ascending: false });

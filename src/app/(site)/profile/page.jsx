@@ -2,7 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/auth/actions";
 import { getBookingsByUser } from "@/services/bookings";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, formatDateTime } from "@/lib/utils";
 import { BookingStatusBadge } from "@/components/booking/status-badge";
 import { ReturnButton } from "@/components/booking/return-button";
 import { ReviewButton } from "@/components/booking/review-button";
@@ -178,13 +178,19 @@ export default async function ProfilePage() {
                         )}
                       </>
                     ) : b.return_status === "requested" ? (
-                      <span className="text-sm font-medium text-amber-600">
+                      <span className="text-right text-sm font-medium text-amber-600 sm:text-right">
                         Return requested
+                        {b.scheduled_return_at && (
+                          <span className="mt-0.5 block text-xs font-normal text-slate-500">
+                            for {formatDateTime(b.scheduled_return_at)}
+                          </span>
+                        )}
                       </span>
                     ) : b.status !== "cancelled" ? (
                       <ReturnButton
                         action={submitReturnRequest.bind(null, b.id)}
                         carName={b.car_name}
+                        dueDate={b.return_date}
                       />
                     ) : null}
                     <Link

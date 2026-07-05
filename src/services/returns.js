@@ -8,15 +8,17 @@ import { createClient as createServerSupabaseClient } from "@/lib/supabase/serve
 
 /**
  * Customer requests to return the car for one of their bookings. Inserts a
- * `car_returns` row (status 'requested'). RLS ensures the booking belongs to
- * the caller, and the unique(booking_id) constraint blocks duplicate requests.
+ * `car_returns` row (status 'requested') recording when the customer says
+ * they'll bring the car back. RLS ensures the booking belongs to the caller,
+ * and the unique(booking_id) constraint blocks duplicate requests.
  * @param {string} bookingId
+ * @param {string} scheduledReturnAt ISO datetime the customer plans to return the car
  */
-export async function requestReturn(bookingId) {
+export async function requestReturn(bookingId, scheduledReturnAt) {
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase
     .from("car_returns")
-    .insert({ booking_id: bookingId });
+    .insert({ booking_id: bookingId, scheduled_return_at: scheduledReturnAt });
   if (error) throw error;
 }
 

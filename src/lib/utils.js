@@ -39,6 +39,25 @@ export function formatDate(value) {
   return dateFormatter.format(date);
 }
 
+const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+});
+
+/**
+ * Format an ISO datetime into "Jul 6, 2026, 2:30 PM".
+ * @param {string | Date} value
+ */
+export function formatDateTime(value) {
+  if (!value) return "";
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return dateTimeFormatter.format(date);
+}
+
 /**
  * Inclusive day count between two dates (min 1). Used for rental totals.
  * @param {string | Date} start

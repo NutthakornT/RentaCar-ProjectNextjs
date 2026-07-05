@@ -1,5 +1,5 @@
 import { getAllBookings } from "@/services/bookings";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, formatDateTime } from "@/lib/utils";
 import {
   AdminPageHeader,
   Table,
@@ -78,15 +78,26 @@ export default async function AdminBookingsPage() {
                 ) : b.status === "cancelled" ? (
                   <span className="text-slate-400">—</span>
                 ) : (
-                  <div className="flex items-center gap-2">
-                    {b.return_status === "requested" && (
-                      <Badge tone="accent">Requested</Badge>
-                    )}
-                    <ConfirmReturnButton
-                      action={confirmReturnAction.bind(null, b.id)}
-                      dueDate={formatDate(b.return_date)}
-                      highlighted={b.return_status === "requested"}
-                    />
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2">
+                      {b.return_status === "requested" && (
+                        <Badge tone="accent">Requested</Badge>
+                      )}
+                      <ConfirmReturnButton
+                        action={confirmReturnAction.bind(null, b.id)}
+                        dueDate={formatDate(b.return_date)}
+                        highlighted={b.return_status === "requested"}
+                      />
+                    </div>
+                    {b.return_status === "requested" &&
+                      b.scheduled_return_at && (
+                        <span className="text-xs text-slate-500">
+                          Customer returns:{" "}
+                          <span className="font-medium text-slate-700">
+                            {formatDateTime(b.scheduled_return_at)}
+                          </span>
+                        </span>
+                      )}
                   </div>
                 )}
               </Td>

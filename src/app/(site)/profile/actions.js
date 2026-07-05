@@ -6,14 +6,20 @@ import { createReview } from "@/services/reviews";
 
 /**
  * Server Action for a customer requesting to return a car. The id is bound via
- * `.bind()` and invoked from the ReturnButton event handler, so it returns
- * `{ error }` on failure rather than throwing.
+ * `.bind()` and invoked from the ReturnButton event handler with the customer's
+ * chosen return date/time, so it returns `{ error }` on failure rather than
+ * throwing.
  * @param {string} bookingId
+ * @param {string} scheduledReturnAt datetime-local value (YYYY-MM-DDTHH:mm)
  * @returns {Promise<{ error: string } | void>}
  */
-export async function submitReturnRequest(bookingId) {
+export async function submitReturnRequest(bookingId, scheduledReturnAt) {
+  const when = new Date(scheduledReturnAt);
+  if (!scheduledReturnAt || Number.isNaN(when.getTime())) {
+    return { error: "Please choose when you'll return the car." };
+  }
   try {
-    await requestReturn(bookingId);
+    await requestReturn(bookingId, when.toISOString());
   } catch (err) {
     if (err?.code === "23505") {
       return { error: "You've already requested a return for this booking." };

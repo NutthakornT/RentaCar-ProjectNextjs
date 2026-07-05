@@ -65,6 +65,7 @@ create table if not exists public.car_returns (
   booking_id uuid not null references public.bookings (id) on delete cascade,
   status text not null default 'requested' check (status in ('requested', 'completed')),
   requested_at timestamptz not null default now(),
+  scheduled_return_at timestamptz, -- when the customer says they'll bring the car back
   returned_at timestamptz,
   condition_notes text,
   late_days integer not null default 0 check (late_days >= 0),
@@ -75,6 +76,9 @@ create table if not exists public.car_returns (
 );
 
 comment on table public.car_returns is 'One return record per booking: requested by the customer, confirmed by an admin.';
+
+-- Backfill the column on databases created before scheduled_return_at existed.
+alter table public.car_returns add column if not exists scheduled_return_at timestamptz;
 
 create index if not exists idx_car_returns_status on public.car_returns (status);
 
