@@ -56,7 +56,7 @@ export default async function AdminDashboardPage() {
         <StatCard
           icon={UsersIcon}
           label="Customers"
-          value={users.length}
+          value={users.filter((u) => u.role === "customer").length}
           tone="success"
         />
         <StatCard

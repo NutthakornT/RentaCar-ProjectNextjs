@@ -10,9 +10,10 @@ import { createClient as createServerSupabaseClient } from "@/lib/supabase/serve
 /** @returns {Promise<UserProfile[]>} */
 export async function getAllUsers() {
   const supabase = await createServerSupabaseClient();
+  // `bookings(count)` embeds a per-profile aggregate: [{ count: n }].
   const { data, error } = await supabase
     .from("profiles")
-    .select("*")
+    .select("*, bookings(count)")
     .order("created_at", { ascending: false });
   if (error) throw error;
   return (data ?? []).map((u) => ({
@@ -21,6 +22,7 @@ export async function getAllUsers() {
     email: u.email,
     role: u.role,
     joined: u.created_at,
+    bookings_count: u.bookings?.[0]?.count ?? 0,
   }));
 }
 

@@ -27,12 +27,13 @@ function Avatar({ name }) {
 
 export default async function AdminUsersPage() {
   const users = await getAllUsers();
+  const customerCount = users.filter((u) => u.role === "customer").length;
 
   return (
     <>
       <AdminPageHeader
         title="Users"
-        description={`${users.length} registered customers.`}
+        description={`${customerCount} registered ${customerCount === 1 ? "customer" : "customers"}.`}
       />
       {/* <DemoBanner /> */}
 
