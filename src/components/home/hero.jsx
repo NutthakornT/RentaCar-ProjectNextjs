@@ -1,13 +1,7 @@
 import Link from "next/link";
 import { SearchForm } from "./search-form";
 import { buttonVariants } from "@/components/ui/button";
-import { SparklesIcon, ArrowRightIcon, StarIcon } from "@/components/ui/icons";
-
-const stats = [
-  { value: "4.9/5", label: "Average rating" },
-  { value: "12k+", label: "Trips completed" },
-  { value: "24/7", label: "Roadside support" },
-];
+import { SparklesIcon, ArrowRightIcon } from "@/components/ui/icons";
 
 export function Hero() {
   return (
@@ -49,29 +43,6 @@ export function Hero() {
               How it works
             </Link>
           </div>
-
-          {/* Trust stats
-          <dl className="mx-auto mt-12 grid max-w-lg grid-cols-3 gap-4">
-            {stats.map((s) => (
-              <div key={s.label} className="text-center">
-                <dt className="text-2xl font-bold text-white sm:text-3xl">
-                  {s.value}
-                </dt>
-                <dd className="mt-1 text-xs text-slate-300 sm:text-sm">
-                  {s.label}
-                </dd>
-              </div>
-            ))}
-          </dl> */}
-
-          {/* <div className="mt-6 flex items-center justify-center gap-1 text-accent-400">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <StarIcon key={i} size={16} filled />
-            ))}
-            <span className="ml-2 text-sm text-slate-300">
-              Rated excellent by 12,000+ drivers
-            </span>
-          </div> */}
         </div>
       </div>
 

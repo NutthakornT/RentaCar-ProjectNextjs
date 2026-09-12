@@ -7,11 +7,8 @@ const iconButtonClass =
   "inline-flex h-8 w-8 items-center justify-center rounded-lg ring-1 ring-slate-200 transition-colors disabled:cursor-not-allowed disabled:opacity-50";
 
 /**
- * Edit / delete controls for admin rows. Each control is a real action when
- * its prop is supplied, otherwise a disabled scaffold:
- * - `editHref` → edit becomes a link (cars); omitted → disabled (bookings, users).
- * - `deleteAction` → a bound server action powers the delete button (cars,
- *   bookings); omitted → disabled (users).
+ * Edit / delete controls for admin rows. Each control is disabled unless its
+ * prop is supplied: `editHref` enables edit, `deleteAction` enables delete.
  * @param {{ editHref?: string, deleteAction?: () => Promise<any>, deleteConfirm?: string }} props
  */
 export function RowActions({ editHref, deleteAction, deleteConfirm }) {

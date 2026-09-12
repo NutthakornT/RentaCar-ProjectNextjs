@@ -19,9 +19,8 @@ import {
 
 /**
  * Client booking flow: renter details → confirmation. Confirming inserts a
- * real row via the `confirmBooking` server action, persisting the pick-up
- * location, phone, and notes alongside the dates and total. (Name/email stay
- * with the customer's profile, so they're collected for display only.)
+ * row via the `confirmBooking` server action; name/email are collected for
+ * display only, since they're read from the customer's profile.
  * @param {{ car: import("@/types").Car, initialPickup?: string, initialReturn?: string, userId?: string, userEmail?: string }} props
  */
 export function BookingFlow({

@@ -1,8 +1,6 @@
 /**
- * Join class names, dropping falsy values. Lightweight stand-in for `clsx`
- * (kept dependency-free since the project uses hand-built Tailwind components).
+ * Join class names, dropping falsy values. Dependency-free stand-in for `clsx`.
  * @param {...(string | false | null | undefined)} classes
- * @returns {string}
  */
 export function cn(...classes) {
   return classes.filter(Boolean).join(" ");

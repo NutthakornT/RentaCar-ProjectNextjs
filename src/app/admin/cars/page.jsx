@@ -5,7 +5,6 @@ import {
   AdminPageHeader,
   Table,
   Td,
-  DemoBanner,
 } from "@/components/admin/admin-ui";
 import { RowActions } from "@/components/admin/row-actions";
 import { removeCar } from "./actions";
@@ -35,11 +34,6 @@ export default async function AdminCarsPage() {
           </Link>
         }
       />
-      {/* <DemoBanner>
-        <span className="font-semibold">Live data.</span> Cars are stored in
-        Supabase — add, edit, and delete all update the public site
-        immediately.
-      </DemoBanner> */}
 
       {cars.length === 0 ? (
         <EmptyState

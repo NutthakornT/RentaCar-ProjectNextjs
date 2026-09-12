@@ -45,10 +45,8 @@ export async function updateSession(request) {
     return NextResponse.redirect(url);
   }
 
-  // /admin additionally requires an admin profile, not just any signed-in
-  // user. Signed-in non-admins are redirected home rather than to /login
-  // (they're already authenticated — the problem is their role) and rather
-  // than a 404 (no need to hide that the route exists).
+  // /admin also requires an admin profile. Non-admins are redirected home,
+  // not to /login (already authenticated) or a 404 (no need to hide the route).
   if (user && request.nextUrl.pathname.startsWith("/admin")) {
     const { data: profile } = await supabase
       .from("profiles")

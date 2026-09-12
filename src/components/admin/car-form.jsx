@@ -9,11 +9,8 @@ import { Field, Input, Select, Textarea } from "@/components/ui/field";
 const initialState = { error: null };
 
 /**
- * Admin car form, shared by "add car" and "edit car". Submits via a Server
- * Action (`action`), which validates against the same constraints as the
- * `cars` table — RLS requires the caller to be an admin. When `car` is
- * passed, fields are prefilled and a hidden `id` input is included so the
- * action knows which row to update.
+ * Admin car form, shared by "add car" and "edit car". When `car` is passed,
+ * fields are prefilled and a hidden `id` input tells `action` which row to update.
  * @param {{ action: (prevState: any, formData: FormData) => Promise<any>, car?: import("@/types").Car, submitLabel?: string, pendingLabel?: string }} props
  */
 export function CarForm({ action, car, submitLabel = "Add car", pendingLabel = "Adding car…" }) {

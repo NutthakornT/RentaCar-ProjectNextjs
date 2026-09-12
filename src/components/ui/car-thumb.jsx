@@ -4,12 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { CarIcon, BoltIcon } from "./icons";
 
-/**
- * Designed placeholder "photo" for a car. Renders a branded gradient with a
- * car silhouette and the model name. If car.image_url is set, renders the
- * real photo instead — falling back to the placeholder if the image fails
- * to load (broken link, deleted file, etc).
- */
+/** Renders car.image_url if set, falling back to a generated gradient placeholder. */
 
 const palettes = [
   ["#0f4c81", "#0d3f6b", "#102c47"],
@@ -33,7 +28,6 @@ export function CarThumb({ car, frame = 0, className, iconSize = 88 }) {
   const [imgError, setImgError] = useState(false);
   const isElectric = car?.fuel === "Electric";
 
-  // ✅ มีรูปจริงและยังไม่เจอ error ตอนโหลด -> แสดงรูปจริง
   if (car?.image_url && !imgError) {
     return (
       <div className={cn("relative h-full w-full overflow-hidden", className)}>
@@ -53,7 +47,6 @@ export function CarThumb({ car, frame = 0, className, iconSize = 88 }) {
     );
   }
 
-  // 🔽 fallback: placeholder เดิม (ไม่มีรูป หรือรูปโหลดไม่สำเร็จ)
   const seed = hash((car?.id ?? "car") + "-" + frame);
   const [a, b, c] = palettes[seed % palettes.length];
   const angle = 120 + (seed % 5) * 15;

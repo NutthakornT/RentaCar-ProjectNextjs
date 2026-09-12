@@ -4,7 +4,6 @@ import {
   AdminPageHeader,
   Table,
   Td,
-  DemoBanner,
 } from "@/components/admin/admin-ui";
 import { RowActions } from "@/components/admin/row-actions";
 import { ConfirmReturnButton } from "@/components/admin/confirm-return-button";
@@ -25,11 +24,6 @@ export default async function AdminBookingsPage() {
         title="Bookings"
         description={`${bookings.length} bookings across all customers.`}
       />
-      {/* <DemoBanner>
-        <span className="font-semibold">Live data.</span> Bookings are read
-        from Supabase. Confirm returns and delete bookings here; editing
-        isn&apos;t available.
-      </DemoBanner> */}
 
       {bookings.length === 0 ? (
         <EmptyState

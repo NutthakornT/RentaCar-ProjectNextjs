@@ -8,7 +8,6 @@ import {
   StatCard,
   Table,
   Td,
-  DemoBanner,
 } from "@/components/admin/admin-ui";
 import { BookingStatusBadge } from "@/components/booking/status-badge";
 import {
@@ -36,7 +35,6 @@ export default async function AdminDashboardPage() {
         title="Dashboard"
         description="An overview of your fleet, bookings, and customers."
       />
-      {/* <DemoBanner /> */}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard

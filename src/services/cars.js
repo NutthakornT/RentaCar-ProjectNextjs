@@ -2,18 +2,13 @@ import { createPublicClient } from "@/lib/supabase/public";
 import { createClient as createServerSupabaseClient } from "@/lib/supabase/server";
 
 /**
- * Data-access layer for cars, backed by Supabase. Reads use the public
- * (anon-key) client since cars are readable by everyone per RLS; writes use
- * the cookie-aware server client so RLS can verify the caller is an admin.
+ * Cars data-access layer. Reads use the public client (RLS allows anyone);
+ * writes use the server client so RLS can verify the caller is an admin.
  * @typedef {import("@/types").Car} Car
  * @typedef {import("@/types").CarFilters} CarFilters
  */
 
-/**
- * Postgres `numeric` columns come back from PostgREST as strings (to avoid
- * float precision loss) — cast them here so every caller gets real numbers,
- * matching the shape the UI expects (e.g. `car.rating.toFixed(1)`).
- */
+/** Postgres `numeric` columns arrive as strings from PostgREST; cast to numbers. */
 function mapCarRow(row) {
   if (!row) return row;
   return {
@@ -201,8 +196,7 @@ export async function getAllCarIds() {
 }
 
 /**
- * Insert a new car. Requires an authenticated admin session — RLS rejects the
- * insert otherwise, and that error is surfaced to the caller.
+ * Insert a new car. Requires an admin session — RLS rejects it otherwise.
  * @param {Omit<Car, "rating"|"reviews_count">} payload
  * @returns {Promise<Car>}
  */
@@ -218,8 +212,7 @@ export async function createCar(payload) {
 }
 
 /**
- * Update an existing car (e.g. marking it out of stock). Requires an
- * authenticated admin session — RLS rejects the update otherwise.
+ * Update an existing car. Requires an admin session — RLS rejects it otherwise.
  * @param {string} id
  * @param {Partial<Omit<Car, "id"|"rating"|"reviews_count">>} payload
  * @returns {Promise<Car>}
@@ -237,9 +230,8 @@ export async function updateCar(id, payload) {
 }
 
 /**
- * Delete a car. Requires an authenticated admin session (RLS). The `bookings`
- * FK is `on delete restrict`, so Postgres rejects deleting a car that still
- * has bookings — the caller surfaces that as a friendly message.
+ * Delete a car. Requires an admin session (RLS). `bookings.car_id` is
+ * `on delete restrict`, so deleting a car with bookings throws.
  * @param {string} id
  */
 export async function deleteCar(id) {

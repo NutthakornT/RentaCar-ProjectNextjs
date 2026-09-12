@@ -12,10 +12,8 @@ function toLocalInput(date) {
 }
 
 /**
- * "Return car" button on a customer's booking. Confirms with SweetAlert2 and
- * asks the customer when they'll bring the car back, then calls a bound server
- * action (`action` = `submitReturnRequest.bind(null, id)`) with that datetime,
- * filing a return request for an admin to confirm.
+ * "Return car" button on a customer's booking. Asks when they'll bring the
+ * car back, then files a return request via a bound server action for an admin to confirm.
  * @param {{ action: (scheduledReturnAt: string) => Promise<{ error?: string } | void>, carName?: string, dueDate?: string }} props
  */
 export function ReturnButton({ action, carName = "car", dueDate }) {

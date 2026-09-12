@@ -1,9 +1,8 @@
 import { createClient as createServerSupabaseClient } from "@/lib/supabase/server";
 
 /**
- * Data-access layer for user profiles, backed by Supabase. Profiles are
- * gated by RLS (a user sees only their own row, admins see all), so these
- * reads use the cookie-aware server client to carry the caller's session.
+ * User profiles data-access layer. RLS gates rows: a user sees only their
+ * own, admins see all.
  * @typedef {import("@/types").UserProfile} UserProfile
  */
 

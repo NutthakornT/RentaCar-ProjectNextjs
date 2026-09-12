@@ -5,10 +5,8 @@ import { requestReturn } from "@/services/returns";
 import { createReview } from "@/services/reviews";
 
 /**
- * Server Action for a customer requesting to return a car. The id is bound via
- * `.bind()` and invoked from the ReturnButton event handler with the customer's
- * chosen return date/time, so it returns `{ error }` on failure rather than
- * throwing.
+ * Server Action for a customer requesting to return a car. Bound via
+ * `.bind()` from ReturnButton, so it returns `{ error }` rather than throwing.
  * @param {string} bookingId
  * @param {string} scheduledReturnAt datetime-local value (YYYY-MM-DDTHH:mm)
  * @returns {Promise<{ error: string } | void>}

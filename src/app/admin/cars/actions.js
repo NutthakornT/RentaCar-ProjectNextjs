@@ -72,10 +72,8 @@ function parseCarForm(formData) {
 }
 
 /**
- * Server Action backing the admin "add car" form. Validates input against the
- * same constraints as the `cars` table, derives a URL-safe slug id, and
- * inserts via the cars service. RLS on the `cars` table requires the caller
- * to be signed in with an admin profile — a non-admin gets a rejected insert,
+ * Server Action backing the admin "add car" form. Derives a URL-safe slug id
+ * and inserts via the cars service; a non-admin's rejected RLS insert is
  * surfaced here as a friendly error rather than a crash.
  * @param {{ error: string | null }} _prevState
  * @param {FormData} formData
@@ -141,10 +139,9 @@ export async function editCar(_prevState, formData) {
 }
 
 /**
- * Server Action to delete a car. The id is bound via `.bind()` and invoked
- * from the delete button's event handler (not a form), so it returns
- * `{ error }` on failure instead of throwing — including the common case of a
- * car that still has bookings (FK `on delete restrict`, Postgres code 23503).
+ * Server Action to delete a car. Bound via `.bind()` from the delete button,
+ * so it returns `{ error }` instead of throwing — including when the car
+ * still has bookings (FK `on delete restrict`, Postgres code 23503).
  * @param {string} id
  * @returns {Promise<{ error: string } | void>}
  */

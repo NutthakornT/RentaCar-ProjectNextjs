@@ -5,11 +5,7 @@ import { createClient as createServerSupabaseClient } from "@/lib/supabase/serve
  * @typedef {import("@/types").Booking} Booking
  */
 
-/**
- * Flatten a joined bookings row into the shape the admin tables expect —
- * denormalized `customer_name` / `car_name` display fields — and cast the
- * numeric total (PostgREST returns `numeric` as a string) to a real number.
- */
+/** Flatten a joined bookings row: add display fields, cast numeric strings to numbers. */
 function mapBookingRow(row) {
   const profile = row.profiles;
   const car = row.cars;
@@ -40,9 +36,8 @@ function mapBookingRow(row) {
 }
 
 /**
- * Every booking across all customers, newest pick-up first. Uses the
- * cookie-aware server client so RLS returns all rows for an admin session
- * (`bookings_select` grants a non-admin only their own bookings).
+ * Every booking across all customers, newest pick-up first. Needs an admin
+ * session — `bookings_select` RLS limits non-admins to their own rows.
  * @returns {Promise<Booking[]>}
  */
 export async function getAllBookings() {
@@ -58,9 +53,8 @@ export async function getAllBookings() {
 }
 
 /**
- * Insert a booking for the current session's user. RLS (`bookings_insert`)
- * requires `auth.uid() = user_id`, so this must run with the cookie-aware
- * server client — a signed-out or mismatched caller gets a rejected insert.
+ * Insert a booking for the current session's user. `bookings_insert` RLS
+ * requires `auth.uid() = user_id`, so a signed-out caller is rejected.
  * @param {{ user_id: string, car_id: string, pickup_date: string, return_date: string, total_price: number, pickup_location?: string, phone?: string, notes?: string|null }} payload
  * @returns {Promise<Booking>}
  */
@@ -87,9 +81,8 @@ export async function createBooking(payload) {
 }
 
 /**
- * Delete a booking. Requires an authenticated admin session (RLS). A linked
- * review's `booking_id` is set null (FK `on delete set null`), so this won't
- * cascade-delete reviews.
+ * Delete a booking. Requires an admin session (RLS). A linked review's
+ * `booking_id` is set null (`on delete set null`), not cascade-deleted.
  * @param {string} id
  */
 export async function deleteBooking(id) {
@@ -99,9 +92,8 @@ export async function deleteBooking(id) {
 }
 
 /**
- * A single customer's bookings, newest pick-up first. Uses the cookie-aware
- * server client; RLS already restricts a non-admin to their own rows, and the
- * explicit `user_id` filter keeps the query correct for an admin session too.
+ * A single customer's bookings, newest pick-up first. The explicit `user_id`
+ * filter keeps this correct for an admin session too, not just RLS.
  * @param {string} userId
  * @returns {Promise<Booking[]>}
  */
@@ -118,10 +110,7 @@ export async function getBookingsByUser(userId) {
   return (data ?? []).map(mapBookingRow);
 }
 
-/**
- * Aggregate booking stats for the admin dashboard. Uses the cookie-aware
- * server client so RLS returns every booking for an admin session.
- */
+/** Aggregate booking stats for the admin dashboard. Requires an admin session. */
 export async function getBookingStats() {
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase

@@ -9,11 +9,8 @@ import { daysBetween } from "@/lib/utils";
 
 /**
  * Server Action backing the booking confirmation step. Re-derives the total
- * from the car's current rate rather than trusting a client-computed number,
- * and relies on Supabase RLS to reject the insert if the caller isn't signed
- * in — the booking-flow client checks for a session first, but this is the
- * real gate. Driver details (pick-up location, phone, notes) are persisted;
- * phone is required.
+ * from the car's current rate rather than trusting a client-computed number;
+ * RLS is the real gate against signed-out inserts, not the client check.
  * @param {{ carId: string, pickup: string, returnDate: string, location?: string, phone: string, notes?: string }} input
  * @returns {Promise<{ booking: import("@/types").Booking } | { error: string }>}
  */

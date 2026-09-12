@@ -4,7 +4,6 @@ import {
   AdminPageHeader,
   Table,
   Td,
-  DemoBanner,
 } from "@/components/admin/admin-ui";
 import { RowActions } from "@/components/admin/row-actions";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +34,6 @@ export default async function AdminUsersPage() {
         title="Users"
         description={`${customerCount} registered ${customerCount === 1 ? "customer" : "customers"}.`}
       />
-      {/* <DemoBanner /> */}
 
       <Table head={["Customer", "Email", "Role", "Joined", "Bookings", ""]}>
         {users.map((u) => (

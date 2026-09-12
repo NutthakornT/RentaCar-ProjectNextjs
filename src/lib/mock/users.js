@@ -1,7 +1,6 @@
 /**
- * Mock customer profiles. Shape mirrors the planned `profiles` table
- * (id, name, avatar_url) plus UI-only fields (email, joined) used by the
- * admin users table until Supabase is connected.
+ * Mock customer profiles, shaped like the `profiles` table plus UI-only
+ * fields (email, joined). Unused now that Supabase is wired up.
  * @typedef {import("@/types").UserProfile} UserProfile
  * @type {UserProfile[]}
  */

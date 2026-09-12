@@ -1,9 +1,6 @@
 /**
- * Mock car inventory for a single rental company.
- * Shape mirrors the planned `cars` table (id, name, brand, type,
- * price_per_day, description, transmission, fuel, seats, image_url, available)
- * plus UI-only enrichments (rating, features, gallery, year, doors) used by the
- * frontend until Supabase is connected.
+ * Mock car inventory, shaped like the `cars` table plus UI-only fields
+ * (rating, features, gallery, year, doors). Unused now that Supabase is wired up.
  * @typedef {import("@/types").Car} Car
  * @type {Car[]}
  */

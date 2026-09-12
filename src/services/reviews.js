@@ -2,15 +2,12 @@ import { createClient as createServerSupabaseClient } from "@/lib/supabase/serve
 import { createPublicClient } from "@/lib/supabase/public";
 
 /**
- * Data-access layer for reviews. Reviews are world-readable per RLS; the
- * reviewer's name is denormalized onto the row (profiles themselves are
- * private) so reviews can be shown to signed-out visitors.
+ * Reviews data-access layer. World-readable per RLS; the reviewer's name is
+ * denormalized onto the row since profiles themselves are private.
  */
 
 /**
- * Recent customer reviews for the landing page, newest first. Only reviews with
- * a written comment are surfaced. Uses the public anon client since reviews and
- * cars are readable by everyone.
+ * Recent customer reviews for the landing page, newest first, comment required.
  * @param {number} [limit]
  * @returns {Promise<import("@/types").Testimonial[]>}
  */
@@ -33,9 +30,8 @@ export async function getRecentReviews(limit = 6) {
 }
 
 /**
- * Insert a review for the current customer's completed booking. Denormalizes
- * the reviewer's name so it can be shown publicly. RLS requires the booking to
- * belong to the reviewer; the unique(booking_id) constraint blocks duplicates.
+ * Insert a review for the current customer's completed booking. RLS requires
+ * the booking to belong to the reviewer; unique(booking_id) blocks duplicates.
  * @param {{ carId: string, bookingId: string, rating: number, comment?: string }} input
  */
 export async function createReview({ carId, bookingId, rating, comment }) {

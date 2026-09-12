@@ -1,16 +1,13 @@
 import { createClient as createServerSupabaseClient } from "@/lib/supabase/server";
 
 /**
- * Data-access layer for car returns (the `car_returns` table). A customer
- * requests a return; an admin confirms it, recording the actual return date,
- * condition, and any late fee, then closing out the booking.
+ * Data-access layer for the `car_returns` table. A customer requests a
+ * return; an admin confirms it and closes out the booking.
  */
 
 /**
- * Customer requests to return the car for one of their bookings. Inserts a
- * `car_returns` row (status 'requested') recording when the customer says
- * they'll bring the car back. RLS ensures the booking belongs to the caller,
- * and the unique(booking_id) constraint blocks duplicate requests.
+ * Customer requests to return the car for one of their bookings. RLS ensures
+ * the booking belongs to the caller; unique(booking_id) blocks duplicates.
  * @param {string} bookingId
  * @param {string} scheduledReturnAt ISO datetime the customer plans to return the car
  */
@@ -23,11 +20,9 @@ export async function requestReturn(bookingId, scheduledReturnAt) {
 }
 
 /**
- * Admin confirms a car has been returned: records the actual return date and
- * condition, computes any late fee ($50/day past the booking's return_date),
- * marks the return 'completed', and closes the booking. Upserts on booking_id
- * so it works whether or not the customer filed a request first. Admin-only via
- * RLS.
+ * Admin confirms a car return: computes any late fee ($50/day past
+ * return_date), marks the return completed, and closes the booking. Upserts
+ * on booking_id so it works whether or not the customer filed a request first.
  * @param {string} bookingId
  * @param {{ returnedAt: string, conditionNotes?: string }} details
  * @returns {Promise<{ lateDays: number, lateFee: number }>}
